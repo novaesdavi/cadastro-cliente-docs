@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-DLC na prática — Guia do time</title>
+<style>
+:root{--bg:#0f172a;--card:#111c33;--fg:#e2e8f0;--mut:#94a3b8;--acc:#f59e0b;--acc2:#38bdf8;--ok:#22c55e;--warn:#f97316}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg)}
+.slide{display:none;min-height:100vh;padding:48px 8vw 90px}.slide.active{display:block}
+h1{font-size:2.6rem;color:var(--acc);margin:.2em 0}h2{font-size:1.9rem;color:var(--acc);border-bottom:2px solid #1e293b;padding-bottom:.3em}
+h3{color:var(--acc2);margin-bottom:.3em}p,li{font-size:1.1rem;line-height:1.6}
+.ref{font-size:.8rem;color:var(--mut);margin-left:.4em}.ref a{color:var(--acc2)}
+.tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.of{background:#14532d;color:#bbf7d0}.rec{background:#7c2d12;color:#fed7aa}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid #1e293b;border-radius:12px;padding:16px 20px}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}
+.step{background:var(--card);border:2px solid var(--acc2);border-radius:10px;padding:10px 16px;font-weight:600}
+.arrow{color:var(--acc);font-size:1.6rem}
+pre{background:#020617;border:1px solid #1e293b;border-radius:10px;padding:16px;font-size:.95rem;overflow:auto;line-height:1.45}
+.hl{color:var(--acc)}.cm{color:var(--mut)}.gr{color:var(--ok)}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #1e293b;padding:8px 12px;text-align:left}th{background:#1e293b}
+.alert{border-left:5px solid var(--warn);background:#2a1a0e;padding:12px 16px;border-radius:6px;margin:14px 0}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:#020617ee}
+button{background:var(--acc);border:0;border-radius:8px;padding:8px 18px;font-weight:700;cursor:pointer}
+#cnt{color:var(--mut)}
+</style></head><body>
+
+<section class="slide">
+<h1>AI-DLC na prática</h1>
+<p style="font-size:1.4rem">AI-Driven Development Life Cycle da AWS — conceitos, rituais, organização do time e dos repositórios</p>
+<p class="cm">Legenda: <span class="tag of">oficial</span> = está na documentação da AWS · <span class="tag rec">recomendação</span> = prática sugerida para o nosso contexto</p>
+<p class="cm">Use as setas ← → ou os botões abaixo para navegar.</p>
+<p class="ref">Fonte principal: <a href="https://github.com/awslabs/aidlc-workflows">awslabs/aidlc-workflows</a> · <a href="https://awslabs.github.io/aidlc-workflows/">site da documentação</a></p>
+</section>
+
+<section class="slide">
+<h2>1. O que é o AI-DLC</h2>
+<p>Metodologia em que a IA conduz o ciclo de desenvolvimento (cria planos, perguntas, design e código) e <b>as pessoas validam e decidem</b> em cada etapa. <span class="tag of">oficial</span>
+<span class="ref">— <a href="https://awslabs.github.io/aidlc-workflows/guide/00-introduction/">Introduction</a></span></p>
+<div class="flow"><div class="step">Inception<br><small>o que construir</small></div><div class="arrow">→</div>
+<div class="step">Construction<br><small>construir</small></div><div class="arrow">→</div>
+<div class="step">Operations<br><small>entregar e operar</small></div></div>
+<p>Cada etapa termina numa <b>aprovação humana</b> (approval gate). <span class="ref">— <a href="https://awslabs.github.io/aidlc-workflows/guide/04-phases-and-stages/">Phases and Stages</a></span></p>
+<p>Planos prontos ao iniciar: <b>mvp</b>, classic, feature, express, poc — ou um plano sob medida. <span class="tag of">oficial</span>
+<span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started</a></span></p>
+</section>
+
+<section class="slide">
+<h2>2. Vocabulário essencial</h2>
+<div class="grid">
+<div class="card"><h3>Mob</h3><p>Vem de <i>mob programming</i>: o time inteiro na mesma tarefa, na mesma tela. No AI-DLC, a IA "digita" e o time orienta e decide.</p></div>
+<div class="card"><h3>Mob Elaboration</h3><p>Ritual central da Inception: o time responde às perguntas da IA, fecha os gaps do PRD e aprova histórias e units.</p></div>
+<div class="card"><h3>Mob Construction</h3><p>É construção de verdade: a IA gera design e código da unit, e o time decide, corrige e aprova na hora.</p></div>
+<div class="card"><h3>Unit (unidade de trabalho)</h3><p>Nasce na Inception: um grupo coeso de histórias, o mais independente possível (ex.: Cadastro, Importação de documentos).</p></div>
+<div class="card"><h3>Bolt</h3><p>Fatia de entrega da Construction com <b>uma ou mais units</b>, uma definição de pronto, uma hipótese de confiança e um dono. É um ciclo curto, de horas ou dias. <span class="ref">— <a href="https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/">Construction Stage Reference</a></span></p></div>
+<div class="card"><h3>Relação</h3><p><b>Histórias → Units</b> (Inception) → <b>Bolts agrupam units</b> (Construction). Veja a árvore completa no slide 7.</p></div>
+</div>
+<p class="ref">Referências: <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/glossary.md">Glossary</a> · <a href="https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/">Construction Stage Reference</a></p>
+</section>
+
+<section class="slide">
+<h2>3. A Inception vai além da Mob Elaboration</h2>
+<ul>
+<li>Projeto com código existente: pode começar com engenharia reversa do código.</li>
+<li>Análise de requisitos → histórias → divisão em units → planejamento.</li>
+<li>A Mob Elaboration é o momento em que o <b>time valida tudo isso junto com a IA</b>.</li>
+</ul>
+<h3>Projeto do zero com PRD incompleto <span class="tag rec">recomendação</span></h3>
+<div class="flow"><div class="step">PM + Tech Lead<br><small>alinhar objetivo, escopo da V1, restrições</small></div><div class="arrow">→</div>
+<div class="step">Mob Elaboration<br><small>time todo + IA fecham os gaps</small></div></div>
+<p>PRD com lacunas é a entrada esperada; não é preciso ter todas as respostas antes.</p>
+<p>Sem comando especial: é a mesma Inception, rodada com o time na mesma tela. A IA gera um arquivo de perguntas e pergunta como respondê-las: <i>Guide me</i>, editar o arquivo ou conversar. <span class="tag of">oficial</span>
+<span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started, seção 5</a></span></p>
+</section>
+
+<section class="slide">
+<h2>4. Quando chamar o time em um MVP</h2>
+<table><tr><th>Momento</th><th>Quem</th><th>Ritual</th></tr>
+<tr><td>Perguntas de requisitos da IA</td><td>PM, Tech Lead, devs, QA, áreas de negócio envolvidas</td><td>Mob Elaboration</td></tr>
+<tr><td>Aprovação de histórias e units</td><td>Time todo</td><td>Mob Elaboration</td></tr>
+<tr><td>Design e código de cada unit</td><td>Dupla dona da unit + Tech Lead nas decisões</td><td>Mob Construction</td></tr></table>
+<p><span class="tag rec">recomendação</span> Rodou a Inception sozinho? Use o resultado como rascunho e repasse com o time para validar.</p>
+<h3>Mob Elaboration em sessões</h3>
+<ul><li>Os artefatos ficam em arquivos: dá para pausar e retomar de onde parou.</li>
+<li>Registre as perguntas em aberto e quem responde; traga as outras áreas para a sessão do assunto delas.</li>
+<li>Não avance para a Construction com dúvidas críticas em aberto.</li></ul>
+<p class="ref">Retomada de sessões: <a href="https://github.com/awslabs/aidlc-workflows/tree/main/docs/guide/">guia, 11-session-management</a></p>
+</section>
+
+<section class="slide">
+<h2>5. Descobri um requisito novo durante a Construction</h2>
+<p>Exemplo: só é possível avançar do cadastro para a importação de documento se um campo for preenchido, e esse campo não apareceu na Inception.</p>
+<div class="grid">
+<div class="card"><h3 style="color:var(--ok)">Ajuste pequeno</h3><p>Decidam na própria sessão e peça para atualizar os artefatos:</p>
+<pre>"Identificamos um requisito novo: o campo X é obrigatório
+para avançar do cadastro para a importação de documento.
+Atualize os requisitos e as histórias afetadas
+antes de continuarmos."</pre></div>
+<div class="card"><h3 style="color:var(--warn)">Mudança grande</h3><p>Pause a unit, volte para a Inception com quem precisa responder, atualize as histórias e retome. Enquanto isso, o time segue com outra unit independente.</p></div>
+</div>
+<p>A IA <b>não refaz a Inception inteira</b>: o estado fica salvo em arquivos e só o que foi impactado é atualizado. <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/tree/main/docs/guide/">guia, 10-state-and-audit</a></span></p>
+<p><span class="tag rec">recomendação</span> Confirme com o PM se o campo tem regra de negócio, como validação ou origem do dado.</p>
+</section>
+
+<section class="slide">
+<h2>6. O resultado de uma construção de ponta a ponta <span class="tag of">oficial</span></h2>
+<p>No guia oficial, o exemplo é uma API REST de inventário (<code>/aidlc Build a REST API for inventory management</code>), rodada com o plano <b>feature</b>: 33 etapas, cada uma com aprovação humana.
+<span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/02-your-first-workflow.md">Your First Workflow</a></span></p>
+<div class="flow">
+<div class="step">Initialization<br><small>automática: cria a intent, detecta greenfield ou brownfield</small></div><div class="arrow">→</div>
+<div class="step">Ideation<br><small>intenção, escopo, mockups</small></div><div class="arrow">→</div>
+<div class="step">Inception<br><small>requisitos, histórias, design, units</small></div><div class="arrow">→</div>
+<div class="step">Construction<br><small>bolts com units, build e testes, CI</small></div><div class="arrow">→</div>
+<div class="step">Operation<br><small>deploy e monitoramento (condicional)</small></div></div>
+<h3>O que fica no registro da intent</h3>
+<pre>
+aidlc/spaces/&lt;space&gt;/
+├── intents/&lt;AAMMDD&gt;-&lt;nome&gt;/
+│   ├── <span class="hl">aidlc-state.md</span>     <span class="cm">estado do workflow: todas as etapas concluídas</span>
+│   ├── <span class="hl">audit/</span>             <span class="cm">trilha completa de decisões, ordenada por data e hora</span>
+│   ├── ideation/          <span class="cm">intenção, pesquisa de mercado, escopo, mockups</span>
+│   ├── inception/         <span class="cm">requisitos, histórias, design, units</span>
+│   ├── construction/      <span class="cm">artefatos de código e de teste de cada unit</span>
+│   ├── operation/         <span class="cm">planos de deploy, observabilidade e incidentes</span>
+│   └── verification/      <span class="cm">relatórios das checagens entre fases</span>
+├── knowledge/             <span class="cm">conhecimento do time, vale para todas as intents</span>
+└── memory/                <span class="cm">práticas e aprendizados confirmados pelo time</span>
+</pre>
+<p class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/02-your-first-workflow.md#artifacts-produced">Your First Workflow, Artifacts Produced</a></p>
+<ul>
+<li><b>Por intent:</b> cada trabalho guarda sua própria história, do que foi pedido até o que foi entregue, com o motivo de cada decisão no <code>audit/</code>.</li>
+<li><b>Entre intents:</b> <code>knowledge/</code> e <code>memory/</code> passam de um trabalho para o próximo. É ali que o time "aprende".</li>
+<li>No plano <b>mvp</b>, a fase de Operations é pulada, então a pasta <code>operation/</code> pode não aparecer. <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started</a></span></li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>7. Da intent ao bolt: como as peças se encaixam</h2>
+<div class="grid" style="grid-template-columns:1fr">
+<div>
+<h3>A hierarquia, com os nomes reais das pastas <span class="tag of">oficial</span></h3>
+<p class="cm">À esquerda, o que é criado no registro da intent. À direita, a etapa que cria e os principais arquivos. * = etapa condicional, que só roda quando o plano precisa.</p>
+<pre style="font-size:.84rem">
+<span class="hl">aidlc/spaces/&lt;space&gt;/</span>
+├── knowledge/  memory/               <span class="cm">valem para todas as intents</span>
+├── codekb/&lt;repo&gt;/                    <span class="cm">2.1 Reverse Engineering, só em brownfield</span>
+└── <span class="hl">intents/&lt;AAMMDD&gt;-&lt;nome&gt;/</span>          <span class="cm">ao iniciar o /aidlc com a intenção</span>
+    ├── aidlc-state.md                <span class="cm">0.3 State Init · atualizado a cada etapa</span>
+    ├── audit/                        <span class="cm">a cada decisão, um arquivo por clone</span>
+    ├── <span class="hl">initialization/</span>               <span class="cm">automática, sem gate</span>
+    │   └── workspace-scaffold/ workspace-detection/ state-init/
+    ├── <span class="hl">ideation/</span>
+    │   ├── intent-capture/           <span class="cm">1.1 · intent-statement.md, stakeholder-map.md</span>
+    │   ├── market-research/ *        <span class="cm">1.2 · competitive-analysis.md, build-vs-buy.md</span>
+    │   ├── feasibility/ *            <span class="cm">1.3 · feasibility-assessment.md, raid-log.md</span>
+    │   ├── scope-definition/         <span class="cm">1.4 · scope-document.md, intent-backlog.md</span>
+    │   ├── team-formation/ *         <span class="cm">1.5 · mob-composition.md</span>
+    │   ├── rough-mockups/ *          <span class="cm">1.6 · wireframes.md, user-flow.md</span>
+    │   └── approval-handoff/         <span class="cm">1.7 · initiative-brief.md, decision-log.md</span>
+    ├── <span class="hl">inception/</span>
+    │   ├── reverse-engineering/ *    <span class="cm">2.1 · só brownfield; as entregas vão para codekb/</span>
+    │   ├── practices-discovery/ *    <span class="cm">2.2 · team-practices.md, discovered-rules.md</span>
+    │   ├── <span class="gr">requirements-analysis/</span>    <span class="cm">2.3 · requirements.md</span>
+    │   ├── <span class="gr">user-stories/</span> *           <span class="cm">2.4 · stories.md, personas.md</span>
+    │   ├── refined-mockups/ *        <span class="cm">2.5 · mockups.md, interaction-spec.md</span>
+    │   ├── domain-design/ *          <span class="cm">2.6 · components.md, decisions.md</span>
+    │   ├── <span class="gr">units-generation/</span>         <span class="cm">2.7 · unit-of-work.md, unit-of-work-dependency.md,</span>
+    │   │                             <span class="cm">      unit-of-work-story-map.md (histórias → units)</span>
+    │   ├── contract-design/ *        <span class="cm">2.8 · contract-summary.md</span>
+    │   └── <span class="gr">delivery-planning/</span>        <span class="cm">2.9 · bolt-plan.md (units → bolts), team-allocation.md</span>
+    ├── <span class="hl">construction/</span>
+    │   ├── <span class="gr">&lt;unit&gt;/</span>                   <span class="cm">uma pasta por unit; 3.1–3.5 se repetem para cada uma</span>
+    │   │   ├── functional-design/ *  <span class="cm">3.1 · entities.md, rules.md, functional-spec.md</span>
+    │   │   ├── nfr-requirements/ *   <span class="cm">3.2 · security-, performance-requirements.md</span>
+    │   │   ├── nfr-design/ *         <span class="cm">3.3 · security-, performance-design.md</span>
+    │   │   ├── infrastructure-design/ * <span class="cm">3.4 · infrastructure-specification.md</span>
+    │   │   └── code-generation/      <span class="cm">3.5 · code-generation-plan.md, code-summary.md,</span>
+    │   │                             <span class="cm">      traceability.json (o código vai para o repositório)</span>
+    │   ├── build-and-test/           <span class="cm">3.6 · depois de todas as units: test-results.md</span>
+    │   └── ci-pipeline/ *            <span class="cm">3.7 · ci-config.md, quality-gates.md</span>
+    ├── <span class="hl">operation/</span> *                  <span class="cm">4.1–4.7 · deploy, ambientes, observabilidade; o mvp pula</span>
+    └── <span class="hl">verification/</span>                 <span class="cm">phase-check-&lt;fase&gt;.md, na passagem entre fases</span>
+</pre>
+<p class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/14-artifacts-reference.md">Artifacts Reference</a> · <a href="https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/">Construction Stage Reference</a></p>
+</div>
+<div>
+<h3>O que vale guardar</h3>
+<ul>
+<li><b>Um bolt contém units, não o contrário.</b> É uma fatia de entrega com uma ou mais units, definição de pronto, hipótese de confiança e dono. <span class="tag of">oficial</span></li>
+<li><b>A ordem vem das dependências.</b> Os bolts são executados na ordem do grafo de dependências das units (<code>unit-of-work-dependency.md</code>), não na ordem em que foram agrupados no <code>bolt-plan.md</code>. <span class="tag of">oficial</span></li>
+<li><b>O primeiro bolt é o skeleton:</b> a menor fatia integrada que funciona de ponta a ponta. Ela precisa passar na checagem real e ter aprovação humana antes das outras units. <span class="tag of">oficial</span></li>
+<li><b>Depois das units:</b> Build and Test roda uma vez para a solução toda e, se estiver no plano, o CI Pipeline vem em seguida. <span class="tag of">oficial</span></li>
+<li><b>Bolts não têm pasta própria.</b> Eles existem no <code>bolt-plan.md</code>, que agrupa as units. No registro, a Construction é organizada por unit. <span class="tag of">oficial</span></li>
+<li><b>Histórias e units se ligam</b> pelo <code>unit-of-work-story-map.md</code>. A etapa User Stories é condicional, então nem todo plano gera <code>stories.md</code>. <span class="tag of">oficial</span></li>
+<li>No Gantt, ◆ marca um gate de aprovação humana.</li>
+</ul>
+<p class="ref">— <a href="https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/">Construction Stage Reference</a></p>
+</div>
+</div>
+
+<h3>Um MVP em 4 semanas <span class="tag rec">exemplo ilustrativo</span></h3>
+<div class="gantt-wrap"><div class="gantt">
+<div class="gl gh0"></div><div class="gw" style="grid-column:2/span 5">Semana 1</div><div class="gw" style="grid-column:7/span 5">Semana 2</div><div class="gw" style="grid-column:12/span 5">Semana 3</div><div class="gw" style="grid-column:17/span 5">Semana 4</div>
+<div class="gl gh0"></div><div class="gh">S</div><div class="gh">T</div><div class="gh">Q</div><div class="gh">Q</div><div class="gh">S</div><div class="gh">S</div><div class="gh">T</div><div class="gh">Q</div><div class="gh">Q</div><div class="gh">S</div><div class="gh">S</div><div class="gh">T</div><div class="gh">Q</div><div class="gh">Q</div><div class="gh">S</div><div class="gh">S</div><div class="gh">T</div><div class="gh">Q</div><div class="gh">Q</div><div class="gh">S</div>
+<div class="gl">Ideation + Inception<small>Mob Elaboration: 4 devs, TL, PM</small></div><div class="gb b-inc" style="grid-column:2/6"><span class="gate" title="aprovação humana">◆</span></div><div class="gl">Bolt 1 · skeleton<small>Unit Cadastro · 4 devs juntos</small></div><div class="gb b-sk" style="grid-column:6/10"><span class="gate" title="aprovação humana">◆</span></div><div class="gl">Bolt 2<small>Unit Importação · Dupla B</small></div><div class="gb b-bo" style="grid-column:10/15"><span class="gate" title="aprovação humana">◆</span></div><div class="gl">Bolt 3<small>Units Notificação + Consulta · Dupla A</small></div><div class="gb b-bo" style="grid-column:10/16"><span class="gate" title="aprovação humana">◆</span></div><div class="gl">3.6 Build and Test<small>solução toda, uma vez</small></div><div class="gb b-bt" style="grid-column:16/18"><span class="gate" title="aprovação humana">◆</span></div><div class="gl">3.7 CI Pipeline<small>condicional</small></div><div class="gb b-ci" style="grid-column:18/20"><span class="gate" title="aprovação humana">◆</span></div><div class="gl">Entrega pelo Gitflow<small>PR, SAST, Sonar, publicação</small></div><div class="gb b-op" style="grid-column:20/22"></div>
+</div></div>
+<p class="cm">Os bolts 2 e 3 em paralelo dependem da forma de dividir o trabalho escolhida no slide 13. Os prazos são só um exemplo: o tamanho real sai do plano de bolts de vocês.</p>
+<style>
+.gantt-wrap{overflow-x:auto;margin:10px 0}
+.gantt{display:grid;grid-template-columns:250px repeat(20,minmax(30px,1fr));gap:4px 2px;min-width:860px;align-items:center}
+.gw{text-align:center;font-weight:700;color:var(--acc2);border-bottom:2px solid #1e293b;padding-bottom:4px}
+.gh{text-align:center;font-size:.75rem;color:var(--mut)}
+.gl{grid-column:1;font-size:.92rem;font-weight:600;line-height:1.2}.gl small{display:block;font-weight:400;color:var(--mut);font-size:.78rem}
+.gb{height:26px;border-radius:6px;position:relative}
+.gate{position:absolute;right:-7px;top:50%;transform:translateY(-50%);color:#fff;font-size:1.1rem;text-shadow:0 0 3px #000}
+.b-inc{background:#0ea5e9}.b-sk{background:#f59e0b}.b-bo{background:#22c55e}.b-bt{background:#a78bfa}.b-ci{background:#f472b6}.b-op{background:#64748b}
+</style>
+</section>
+
+<section class="slide">
+<h2>8. Organizando 4 devs full stack <span class="tag rec">recomendação</span></h2>
+<p>O ponto de partida é o mesmo: <b>Mob Elaboration com os 4 devs, o Tech Lead e o PM</b>. O que muda é como as units são construídas em paralelo, e isso depende de onde o código mora: veja as <b>três formas de dividir o trabalho no slide 13</b>.</p>
+<pre>
+                 <span class="hl">Mob Elaboration</span> (4 devs + Tech Lead + PM)
+                               │  contratos de API definidos aqui
+           ┌───────────────────┴───────────────────┐
+     <span class="gr">Dupla A</span> → svc-cadastro                <span class="gr">Dupla B</span> → svc-importacao
+     (front + serviço, em bolts)          (front + serviço, em bolts)
+           └──────── sincronização a cada bolt ────────┘
+                   Tech Lead nos gates de aprovação
+</pre>
+<ul>
+<li>Façam o primeiro bolt com os 4 juntos, para todos aprenderem o fluxo antes de se dividir.</li>
+<li>Combinem os contratos de API e os dados compartilhados ainda na Inception, para uma dupla não travar a outra.</li>
+<li>Cada dev tem o próprio arquivo de audit, por clone (<code>audit/&lt;host&gt;-&lt;clone&gt;.md</code>), e os arquivos são mesclados por data e hora, então os registros de decisão não conflitam no Git. <span class="tag of">oficial</span> <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/14-artifacts-reference.md#directory-tree">Artifacts Reference</a></span></li>
+</ul>
+</section>
+
+<section class="slide">
+<h2>9. Operations com o nosso Gitflow</h2>
+<p>O AI-DLC <b>não substitui</b> o pipeline: ele se encaixa nele. <span class="tag rec">recomendação</span></p>
+<div class="flow"><div class="step">Mob Construction<br><small>SonarLint na IDE</small></div><div class="arrow">→</div>
+<div class="step">Branch + PR<br><small>Gitflow</small></div><div class="arrow">→</div>
+<div class="step">SAST + SonarQube<br><small>gates de qualidade</small></div><div class="arrow">→</div>
+<div class="step">Empacotar + publicar</div><div class="arrow">→</div>
+<div class="step">Produção<br><small>alertas viram nova Inception</small></div></div>
+<ul><li>Os gates de qualidade são a rede de segurança para o código gerado pela IA.</li>
+<li>Na Operations, a IA ajuda com a configuração do pipeline, a infraestrutura como código e o monitoramento, sempre com aprovação humana.</li>
+<li>O plano <b>mvp</b> pula a fase de Operations e entrega o núcleo. <span class="tag of">oficial</span> <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started</a></span></li></ul>
+<p>As units são entregues na branch de integração que o time definir, e as chamadas git respeitam os hooks do próprio repositório. <span class="tag of">oficial</span> <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/releases">Releases</a></span></p>
+</section>
+
+<section class="slide">
+<h2>10. Instalação e setup</h2>
+<h3>Cada dev, na própria máquina <span class="tag of">oficial</span></h3>
+<pre><span class="cm"># macOS, Linux ou WSL</span>
+curl -fsSL https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.sh | sh
+<span class="cm"># Windows PowerShell (janela normal, sem administrador)</span>
+irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex</pre>
+<h3>Tech Lead, uma vez, na raiz do projeto</h3>
+<pre>aidlc config --harness claude     <span class="cm"># ou copilot</span>
+aidlc doctor
+git add .claude aidlc .gitignore .mcp.json aidlc.settings.json
+git commit -m "Set up AI-DLC"</pre>
+<h3>Cada dev, depois do clone</h3>
+<pre>git clone &lt;repo-inception&gt; && cd &lt;repo-inception&gt;
+aidlc doctor
+<span class="cm"># abrir a ferramenta na raiz e digitar:</span>
+/aidlc        <span class="cm"># retoma de onde parou</span></pre>
+<p class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started, seções 1 a 4</a> · <a href="https://awslabs.github.io/aidlc-workflows/guide/18-install-and-lifecycle/">Install and Lifecycle</a></p>
+</section>
+
+<section class="slide">
+<h2>11. O que versionar <span class="tag of">oficial</span></h2>
+<table><tr><th>Caminho</th><th>O que é</th><th>Commit?</th></tr>
+<tr><td><code>.claude/</code> (ou pasta do Copilot)</td><td>Skill /aidlc, agentes, etapas, hooks, settings.json</td><td>Sim</td></tr>
+<tr><td class="hl"><code>aidlc/</code></td><td>Regras (memory) e o registro de cada trabalho: <b>a nossa Inception mora aqui</b></td><td>Sim</td></tr>
+<tr><td><code>.gitignore</code></td><td>Bloco do AI-DLC adicionado ao nosso</td><td>Sim</td></tr>
+<tr><td><code>.mcp.json</code></td><td>Servidores MCP, se habilitados</td><td>Sim</td></tr>
+<tr><td><code>aidlc.settings.json</code></td><td>Preset de modelo do time</td><td>Sim</td></tr>
+<tr><td><code>*.settings.local.json</code></td><td>Escolhas pessoais de cada dev</td><td>Não (gitignore)</td></tr></table>
+<p class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started, seção 3</a></p>
+<div class="alert">Não copie o repositório inteiro da AWS para o repositório da empresa: o instalador e o <code>aidlc config</code> geram só o necessário.</div>
+<ul><li><span class="tag rec">recomendação</span> Commit a cada aprovação de etapa; mudança de requisito passa por PR, igual ao código.</li>
+<li>Os registros chegam aos colegas <b>somente via commit e push</b> da pasta <code>aidlc/</code>. <span class="tag of">oficial</span></li></ul>
+</section>
+
+<section class="slide">
+<h2>12. O nome do repositório importa?</h2>
+<p><b>Não.</b> O AI-DLC não procura a raiz do Git subindo pelas pastas: a pasta <code>aidlc/</code> fica onde o <code>aidlc config</code> rodou. Basta abrir a ferramenta nessa pasta. <span class="tag of">oficial</span>
+<span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started, seção 2</a></span></p>
+<h3>Layout de repositório único</h3>
+<pre>
+meu-projeto/                     <span class="cm">← qualquer nome; abrir a ferramenta aqui</span>
+├── .claude/                     <span class="gr">commit</span>
+├── aidlc/                       <span class="gr">commit</span>  <span class="hl">← mais importante</span>
+│   └── spaces/default/
+│       ├── memory/              <span class="cm">regras do framework, do time e do projeto</span>
+│       └── intents/
+│           └── &lt;data&gt;-&lt;nome-da-intent&gt;/
+│               ├── ideation/intent-capture/   <span class="cm">perguntas e respostas</span>
+│               └── ...                         <span class="cm">requisitos, histórias, units</span>
+├── .mcp.json                    <span class="gr">commit</span>
+├── aidlc.settings.json          <span class="gr">commit</span>
+├── aidlc.settings.local.json    <span class="cm">pessoal, ignorado</span>
+└── src/ ...
+</pre>
+</section>
+
+<section class="slide">
+<h2>13. Vários serviços, um repositório cada</h2>
+
+<h3>Onde o código mora <span class="tag of">oficial</span></h3>
+<p>A pasta <code>aidlc/</code> guarda só método, estado, audit e artefatos, <b>nunca código</b>. O código gerado vai para os repositórios de código do workspace:</p>
+<ul>
+<li><b>Repositório único:</b> a própria pasta do projeto.</li>
+<li><b>Multi-repo:</b> pastas irmãs, filhas diretas da raiz do workspace, cada uma com seu <code>.git</code>. Um submódulo git de um projeto que tem código próprio ao lado <b>não conta</b> como repositório irmão.</li>
+</ul>
+<p class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/14-artifacts-reference.md#directory-tree">Artifacts Reference, Directory tree</a></p>
+
+<h3>Layout de workspace <span class="tag of">oficial</span></h3>
+<p>Uma pasta <code>aidlc/</code> com os repositórios de serviço <b>ao lado</b>, como irmãos.
+<span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/pull/2515">PR #2515 "Where aidlc/ lives"</a> · <a href="https://github.com/awslabs/aidlc-workflows/pull/3774">PR #3774</a> · <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/14-artifacts-reference.md#directory-tree">Artifacts Reference</a></span></p>
+<pre>
+workspace/                        <span class="cm">← abrir a ferramenta aqui</span>
+├── .claude/
+├── repos.json                    <span class="hl">lista dos repositórios do workspace</span>
+├── <span class="gr">svc-cadastro/.git</span>             <span class="cm">repositório irmão, criado do template: o código vai aqui</span>
+├── <span class="gr">svc-importacao/.git</span>           <span class="cm">repositório irmão, criado do template: o código vai aqui</span>
+├── <span class="gr">web-front/.git</span>                <span class="cm">repositório irmão</span>
+└── aidlc/                        <span class="hl">método, estado, audit e artefatos</span>
+    └── spaces/&lt;space&gt;/
+        ├── knowledge/  memory/
+        ├── codekb/&lt;repo&gt;/        <span class="cm">engenharia reversa, uma por repositório</span>
+        └── intents/&lt;AAMMDD&gt;-&lt;nome&gt;/
+            ├── audit/&lt;host&gt;-&lt;clone&gt;.md   <span class="cm">um arquivo por clone</span>
+            └── construction/&lt;unit&gt;/      <span class="cm">artefatos de cada unit</span>
+</pre>
+
+<h3>Multi-repo intent <span class="tag of">oficial</span></h3>
+<p>É uma intent cujo trabalho passa por mais de um repositório irmão. O conjunto de repositórios é definido <b>na criação da intent</b>: de forma explícita, com <code>--repos a,b</code>, ou por descoberta automática (cada pasta filha com <code>.git</code>). Ele fica salvo na linha da intent em <code>intents.json</code>, no campo <code>repos</code>. Na Construction, cada operação git é ancorada a um repositório com <code>--repo &lt;nome&gt;</code>. Uma intent sem repositórios registrados é o caso de repositório único.
+<span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/glossary.md">Glossary, Multi-repo intent</a></span></p>
+<ul>
+<li>Repositórios irmãos podem ser adicionados ou removidos no meio do trabalho. <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/releases">Releases</a></span></li>
+<li>Cada dev faz 2 commits: o da pasta <code>aidlc/</code> e o do serviço. <span class="tag rec">recomendação</span></li>
+</ul>
+
+<div class="alert"><b>A restrição que decide o desenho:</b> o modo <b>"Several teams"</b> (units com dono por time) exige <b>um único repositório</b> na raiz do workspace. Se a intent tem repositórios irmãos registrados, ele é rejeitado antes de mudar qualquer estado. Ou seja, multi-repo roda em modo solo.
+<span class="ref">— <a href="https://builder.aws.com/content/3JnevhKGMegT8lxhEeKWqOvLKbP/ai-dlc-workflow-v2construction-teamunit">AWS Builder Center: Construction com vários times (set/2026)</a> · <a href="https://github.com/wizeline/aws-aidlc-workflows/blob/main/docs/guide/12-cli-commands.md">fork wizeline, 12-cli-commands</a></span></div>
+
+<h3>Três formas de dividir o trabalho</h3>
+<div class="grid">
+<div class="card"><h3>A. Monorepo + times <span class="tag of">oficial</span></h3>
+<p>Um repositório, com os serviços como pastas. Com 2 ou mais units, ao fim da Inception o AI-DLC pergunta quem vai construí-las: escolha <b>"Several teams"</b>. Cada dupla faz o <i>claim</i> de uma unit; quem pedir primeiro fica com ela.</p>
+<p class="cm">claim → implementar → publish → pin → aprovação humana → land</p>
+<p><b class="gr">+</b> paralelismo nativo, com gate de merge.<br><b style="color:var(--warn)">−</b> abre mão de um repositório por serviço; o land não aceita squash nem rebase, então é preciso combinar isso com o Gitflow.</p>
+<p class="ref">— <a href="https://builder.aws.com/content/3JnevhKGMegT8lxhEeKWqOvLKbP/ai-dlc-workflow-v2construction-teamunit">Builder Center</a> · <a href="https://github.com/awslabs/aidlc-workflows/releases">Releases</a></p></div>
+<div class="card"><h3>B. Multi-repo, solo <span class="tag of">oficial</span></h3>
+<p>Uma intent com todos os serviços (<code>--repos svc-cadastro,svc-importacao</code>). O time constrói as units <b>uma de cada vez</b>, em Mob Construction com os 4.</p>
+<p><b class="gr">+</b> mantém um repositório por serviço e é o caminho mais simples.<br><b style="color:var(--warn)">−</b> sem paralelismo nativo entre as duplas.</p>
+<p class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/glossary.md">Glossary</a></p></div>
+<div class="card"><h3>C. Uma intent por serviço <span class="tag rec">recomendação</span></h3>
+<p>A Inception compartilhada vira referência, com contratos de API e decisões em <code>knowledge/</code>. Cada dupla abre a <b>sua</b> intent, limitada ao seu repositório (<code>--repos svc-cadastro</code>), em modo solo.</p>
+<p><b class="gr">+</b> repositórios separados <b>e</b> duplas em paralelo.<br><b style="color:var(--warn)">−</b> não é um fluxo descrito pela AWS: valide no piloto. A integração entre serviços fica com vocês.</p></div>
+</div>
+<p><span class="tag rec">recomendação</span> Escolham A, B ou C <b>antes</b> de criar a intent da Construction: o conjunto de repositórios é registrado na criação.</p>
+</section>
+
+<section class="slide">
+<h2>14. Construction a partir dos nossos templates <span class="tag rec">recomendação</span></h2>
+<ol><li>Crie os repositórios de serviço a partir dos templates (arquitetura, componente do Datadog, estrutura de pastas).</li>
+<li>Registre o padrão dos templates como <b>regras do time</b> em <code>aidlc/spaces/default/memory/</code>. <span class="ref">— <a href="https://github.com/awslabs/aidlc-workflows/tree/main/docs/guide/">09-rules-and-the-learning-loop · 08-knowledge</a></span></li>
+<li>Anexe na Inception as telas do Figma e a arquitetura do draw.io, como já foi feito.</li>
+<li>Uma unit por serviço. Ao iniciar, diga, por exemplo:
+<pre>"Construa a unit Cadastro no repositório svc-cadastro,
+que já segue o nosso template. Não altere a estrutura base."</pre></li></ol>
+</section>
+
+
+<section class="slide">
+<h2>15. Arquivos para prestar mais atenção</h2>
+<div class="grid">
+<div class="card"><h3>aidlc/</h3><p>Fonte da verdade das decisões. Commit e push sempre após aprovar uma etapa.</p></div>
+<div class="card"><h3>aidlc/spaces/default/memory/</h3><p>Regras do time e do projeto, incluindo os templates. Mudanças por PR.</p></div>
+<div class="card"><h3>repos.json</h3><p>Quais repositórios fazem parte do workspace.</p></div>
+<div class="card"><h3>.claude/settings.json</h3><p>Hooks e permissões pré-aprovadas. Revise antes de confiar na pasta.</p></div>
+<div class="card"><h3>aidlc.settings.json</h3><p>Preset de esforço do modelo, compartilhado pelo time.</p></div>
+<div class="card"><h3>*.local.json</h3><p>Pessoais. Nunca vão para o Git.</p></div>
+</div>
+</section>
+
+<section class="slide">
+<h2>Referências</h2>
+<ul>
+<li><a href="https://github.com/awslabs/aidlc-workflows">Repositório oficial awslabs/aidlc-workflows</a></li>
+<li><a href="https://awslabs.github.io/aidlc-workflows/">Site da documentação</a></li>
+<li><a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/01-getting-started.md">Getting Started</a></li>
+<li><a href="https://github.com/awslabs/aidlc-workflows/tree/main/docs/guide/">Índice do guia (Spaces and Intents, State and Audit, Sessions, Rules, Knowledge)</a></li>
+<li><a href="https://awslabs.github.io/aidlc-workflows/guide/04-phases-and-stages/">Phases and Stages</a></li>
+<li><a href="https://awslabs.github.io/aidlc-workflows/reference/04-stages/construction/">Construction Stage Reference</a></li>
+<li><a href="https://awslabs.github.io/aidlc-workflows/guide/18-install-and-lifecycle/">Install and Lifecycle</a></li>
+<li><a href="https://github.com/awslabs/aidlc-workflows/blob/main/docs/guide/glossary.md">Glossary</a></li>
+<li><a href="https://github.com/awslabs/aidlc-workflows/releases">Releases (notas de versão)</a></li>
+<li><a href="https://github.com/awslabs/aidlc-workflows/pull/2515">PR #2515: Where aidlc/ lives</a></li>
+</ul>
+<p class="cm">Conteúdo levantado em novembro de 2026. O AI-DLC muda rápido: confirme os detalhes na versão instalada.</p>
+</section>
+
+<aside id="side"><div class="brand">AI-DLC</div><ol id="toc"></ol></aside>
+<nav><button onclick="go(i-1)">← Anterior</button><span id="cnt"></span><button onclick="go(i+1)">Próximo →</button></nav>
+<style>
+#side{position:fixed;top:0;left:0;bottom:0;width:260px;background:#020617;border-right:1px solid #1e293b;overflow-y:auto;padding:20px 12px}
+#side .brand{color:var(--acc);font-weight:800;font-size:1.3rem;margin:0 8px 14px}
+#toc{list-style:none;padding:0;margin:0}#toc li{font-size:.92rem;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--mut);line-height:1.3}
+#toc li:hover{background:#111c33;color:var(--fg)}#toc li.on{background:var(--acc);color:#000;font-weight:700}
+.slide{margin-left:260px}nav{left:260px}
+@media(max-width:800px){#side{width:180px}.slide{margin-left:180px;padding:30px 5vw 90px}nav{left:180px}}
+</style>
+<script>
+const S=[...document.querySelectorAll('.slide')],T=document.getElementById('toc');let i=0;
+S.forEach((s,k)=>{const h=s.querySelector('h1,h2');const li=document.createElement('li');
+li.textContent=h.childNodes[0].textContent.trim();li.onclick=()=>go(k);T.appendChild(li)});
+function go(n){if(n<0||n>=S.length)return;S[i].classList.remove('active');T.children[i].classList.remove('on');
+i=n;S[i].classList.add('active');T.children[i].classList.add('on');T.children[i].scrollIntoView({block:'nearest'});
+document.getElementById('cnt').textContent=(i+1)+' / '+S.length;window.scrollTo(0,0);location.hash=i+1}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(i+1);if(e.key==='ArrowLeft')go(i-1)});
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+</script>
+</body></html>
