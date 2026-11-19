@@ -7,21 +7,20 @@
 
 ## Way of Working
 
-<!-- Affirmed during practices-discovery. Example: -->
-<!-- We use GitHub Flow with feature branches. Branches live 3-5 days max. -->
-<!-- Hotfixes branch from main and merge back via expedited review. -->
+- Trabalhamos com ramos longos por funcionalidade, que voltam ao `main` quando a funcionalidade termina (Q1, opção B). Isso substitui o padrão sugerido de ramos curtos com squash.
+- Um commit pedido vai para o ramo em que já estamos; só criamos ramo novo quando alguém pedir ou quando a funcionalidade em andamento exigir o seu ramo longo.
 
 ## Walking Skeleton
 
-<!-- Affirmed during practices-discovery. Example: -->
-<!-- We don't run a walking skeleton — our deployment pipeline is mature -->
-<!-- and the slice cost outweighs the value at our maturity stage. -->
+- Construímos primeiro uma fatia fina de ponta a ponta: entrar no sistema, cadastrar um cliente, enviar ao Backoffice, aceitar e publicar no tópico. Só depois entram as demais funções (Q2, opção A).
+- A verificação do esqueleto usa o comando de verificação de Construção autorizado por uma pessoa, e a aprovação do checkpoint é humana.
 
 ## Testing Posture
 
-<!-- Affirmed during practices-discovery. Example: -->
-<!-- We use BDD. Specifications drive scenarios; scenarios drive code. -->
-<!-- Each Unit ships with feature files in /features/. -->
+- **Methodology**: test-after
+- **Ordering**: Implementar cada camada testável aplicável e, em seguida, escrever e executar os testes dessa camada.
+- **Methodology evidence**: Resposta da pessoa na Q4 (opção A): teste depois, ou seja, implementar cada camada e escrever os testes dela em seguida.
+- Piso de cobertura de 80% das linhas e execução dos testes em CI antes do merge (Q5, opção A).
 
 ## Guard Policy
 
@@ -29,14 +28,15 @@
 
 ## Deployment
 
-<!-- Affirmed during practices-discovery. -->
+- A publicação é toda manual: alguém publica cada ambiente quando decidir (Q6, opção B). Isso substitui o padrão sugerido de homologação automática a cada merge.
+- Quem conduz o PRD aprova uma publicação em produção (Q7, opção C). A pessoa que conduz o PRD ainda não foi nomeada.
+- No congelamento de mudanças do fim do ano (dezembro e início de janeiro), só são permitidas publicações de correção urgente, com aprovação (Q8, opção B).
+- Contexto conhecido: a empresa tem conta AWS sem nenhum serviço de aplicação em uso (C04); não há pipeline nem ambiente existentes para reaproveitar.
 
 ## Code Style
 
-<!-- Team-specific conventions beyond the linter. Example: -->
-<!-- - Prefer named exports over default exports -->
-<!-- - All async functions return Result<T, E>, never throw -->
-
+- Usamos o formatador e o linter padrão da linguagem escolhida, executados em CI, com falha bloqueando o merge (Q3, opção A).
+- A linguagem e a stack ainda não foram escolhidas (C09), então o formatador e o linter específicos serão nomeados quando a stack for decidida.
 ## Forbidden
 
 <!-- Team-specific forbidden patterns -->

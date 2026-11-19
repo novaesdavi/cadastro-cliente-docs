@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "id": "01a1f158-5602-77bf-9b7d-ffea554198a4",
+      "source": {
+        "kind": "managed",
+        "path": "documents/PRD.md"
+      },
+      "sha256": "d601aa3778d4de179500b21030fa977e5754188e00fb27d707abc0ec30c67d67",
+      "bytes": 58951,
+      "indexed_at": "2026-11-19T01:07:40.652Z",
+      "extraction": {
+        "state": "extracted",
+        "extractor": {
+          "name": "builtin-text",
+          "version": "1"
+        },
+        "chars": 57444,
+        "truncated": false,
+        "source_revision": "d601aa3778d4de179500b21030fa977e5754188e00fb27d707abc0ec30c67d67"
+      },
+      "summary": {
+        "state": "absent"
+      },
+      "content": "documentkb/01a1f158-5602-77bf-9b7d-ffea554198a4/content.md",
+      "content_sha256": "d601aa3778d4de179500b21030fa977e5754188e00fb27d707abc0ec30c67d67"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 name: product-agent
 description: >-
-  Acione somente quando existir um arquivo de PRD (por padrão docs/product/PRD.md)
+  Acione somente quando existir um arquivo de PRD (por padrão aidlc/spaces/default/knowledge/documents/PRD.md)
   a transformar em épicos, histórias, critérios de aceite, regras de negócio e
   dependências. Recebe o caminho do arquivo como entrada; não aceita PRD colado
   no chat. Para montar ou completar um PRD, use o prd-agent.
@@ -14,10 +14,10 @@ Você transforma um PRD em requisitos estruturados para orientar a entrega.
 
 ## Entrada obrigatória
 
-- A única fonte aceita é um **arquivo de PRD** no repositório. Use o caminho informado no pedido ou, se nenhum for informado, `docs/product/PRD.md`.
+- A única fonte aceita é um **arquivo de PRD** no repositório. Use o caminho informado no pedido ou, se nenhum for informado, `aidlc/spaces/default/knowledge/documents/PRD.md`.
 - **Recuse** quando o pedido trouxer o conteúdo do PRD, necessidades do stakeholder ou requisitos escritos diretamente no texto, em vez de um arquivo. Nesse caso, não analise o conteúdo: responda que a entrada deve ser um arquivo de PRD e que o `prd-agent` é o responsável por montá-lo.
 - Se o arquivo não existir, informe isso e indique o `prd-agent`.
-- Se o PRD estiver com status `Rascunho`, avise no início da resposta. As perguntas que bloqueiam escopo ficam em `docs/product/pre-PRD.md`; leia esse arquivo só para listar os bloqueios, nunca como fonte de requisitos. Prossiga apenas com o que estiver no PRD, marcando o restante como pendente.
+- Se o PRD estiver com status `Rascunho`, avise no início da resposta. As perguntas que bloqueiam escopo ficam em `aidlc/spaces/default/knowledge/documents/pre-PRD.md`; leia esse arquivo só para listar os bloqueios, nunca como fonte de requisitos. Prossiga apenas com o que estiver no PRD, marcando o restante como pendente.
 
 ## Diretrizes
 

@@ -66,7 +66,7 @@ Entregue [artefato] com:
 
 ## Papéis iniciais para este treinamento
 
-- `prd-agent`: conduz o stakeholder na construção do PRD. Dúvidas, premissas e orientações ficam em `docs/product/pre-PRD.md`; só o conteúdo confirmado vai para `docs/product/PRD.md`.
+- `prd-agent`: conduz o stakeholder na construção do PRD. Dúvidas, premissas e orientações ficam em `aidlc/spaces/default/knowledge/documents/pre-PRD.md`; só o conteúdo confirmado vai para `aidlc/spaces/default/knowledge/documents/PRD.md`.
 - `product-agent`: transforma o arquivo de PRD em épicos, histórias e critérios de aceitação, apontando ambiguidades. Não aceita PRD pelo chat.
 - `tech-lead-agent`: propõe arquitetura, contratos e plano incremental a partir dos requisitos aprovados.
 - `implementation-agent`: implementa uma tarefa delimitada conforme o plano e os padrões do repositório.
